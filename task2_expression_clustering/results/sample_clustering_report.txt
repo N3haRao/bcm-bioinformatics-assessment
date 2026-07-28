@@ -1,0 +1,148 @@
+============================================================================
+Task 2b: clustering samples and finding their gene signatures
+============================================================================
+Genes after filtering : 9,767
+Samples               : S1, S2, S3, S4, S5, S6, S7, S8, S9
+Normalization         : median
+
+Gene selection for the sample distances
+----------------------------------------------------------------------------
+  A gene that does not move between samples contributes only noise to
+  the distance between them, so the distances are computed on the most
+  variable genes. The selection is blind to any sample grouping, it
+  only asks whether a gene varies at all.
+
+  most variable genes used : 2,000 of 9,767
+  log2 variance cut-off    : 0.2296
+  median log2 variance, selected vs all : 0.5891 vs 0.0642
+
+Why the raw correlation matrix is not enough
+----------------------------------------------------------------------------
+  all genes, not gene-centred    : off-diagonal r from 0.8747 to 0.9893  (range 0.1146)
+  variable genes, gene-centred   : off-diagonal r from -0.8190 to 0.7863  (range 1.6053)
+  The second spreads the samples over a 14.0x wider range, which is
+  the difference between resolving the groups and not.
+
+How many sample clusters
+----------------------------------------------------------------------------
+     k     silhouette          cluster sizes
+     2         0.7270                 [6, 3]
+     3         0.4204              [4, 3, 2]
+     4         0.4016           [3, 3, 2, 1]
+     5         0.3771        [3, 3, 1, 1, 1]
+
+  k chosen by silhouette : 2
+  k used                 : 2
+
+  assignments:
+    cluster 1 : S1, S2, S3
+    cluster 2 : S4, S5, S6, S7, S8, S9
+
+Bootstrap support: how often each pair of samples clusters together
+----------------------------------------------------------------------------
+  1000 replicates, each resampling the 2,000 genes with replacement and
+  redoing the clustering from scratch. This, not the dendrogram, is the
+  evidence for whether a grouping is real.
+
+             S1     S2     S3     S4     S5     S6     S7     S8     S9
+  S1        100    100    100      0      0      0      0      0      0
+  S2        100    100    100      0      0      0      0      0      0
+  S3        100    100    100      0      0      0      0      0      0
+  S4          0      0      0    100    100    100    100    100    100
+  S5          0      0      0    100    100    100    100    100    100
+  S6          0      0      0    100    100    100    100    100    100
+  S7          0      0      0    100    100    100    100    100    100
+  S8          0      0      0    100    100    100    100    100    100
+  S9          0      0      0    100    100    100    100    100    100
+
+  mean support for pairs placed TOGETHER  : 100.0%  (min 100.0%)
+  mean support for pairs placed APART     : 0.0%  (max 0.0%)
+
+  every pair placed together is supported in at least 90% of
+  replicates, so the partition is not an artefact of the gene set.
+
+Gene signatures per sample cluster
+----------------------------------------------------------------------------
+  Ranked by signal-to-noise ratio, (mean_in - mean_out) divided by the
+  sum of the two standard deviations. Preferred over a t statistic
+  because with 3 samples per group a t test rewards a group that
+  happens to have a very small spread, which is not evidence.
+
+  Cluster 1 (S1, S2, S3)
+    top 20 UP markers
+      gene            SNR     log2FC    mean in   mean out
+      G2837         12.82      6.495     12.246      5.751
+      G2428         12.12     10.542     14.444      3.902
+      G344          11.13      1.875     14.108     12.233
+      G9468         10.62      3.010     15.644     12.634
+      G6261         10.03      2.772     14.985     12.213
+      G8324          9.84      2.524     15.633     13.109
+      G5761          9.79      5.533     10.104      4.570
+      G2969          9.64      6.622     12.297      5.675
+      G7059          9.63      3.554     11.407      7.853
+      G2433          9.51     10.317     12.915      2.598
+      G6801          9.44      5.253     17.028     11.775
+      G1103          9.33      2.235     15.866     13.631
+      G8836          8.94      4.499      9.222      4.723
+      G7058          8.74      3.258     11.724      8.466
+      G2427          8.73      6.513     15.579      9.065
+      G1383          8.59      5.891     12.093      6.202
+      G3570          8.25      3.273     12.440      9.167
+      G8428          8.17      1.798     15.129     13.331
+      G8433          7.82      2.195     14.874     12.679
+      G7682          7.56      3.103     12.872      9.769
+    top 5 DOWN markers
+      G2291         -8.88     -3.600      9.356     12.956
+      G4681         -8.12     -3.415     11.898     15.314
+      G8582         -8.05     -3.277     12.298     15.575
+      G1916         -8.02     -5.191      6.202     11.393
+      G4671         -7.89     -4.030     12.424     16.454
+
+  Cluster 2 (S4, S5, S6, S7, S8, S9)
+    top 20 UP markers
+      gene            SNR     log2FC    mean in   mean out
+      G2291          8.88      3.600     12.956      9.356
+      G4681          8.12      3.415     15.314     11.898
+      G8582          8.05      3.277     15.575     12.298
+      G1916          8.02      5.191     11.393      6.202
+      G4671          7.89      4.030     16.454     12.424
+      G9515          7.71      2.316     11.279      8.963
+      G3175          7.60      3.071     13.239     10.168
+      G9480          7.54      3.316     12.259      8.943
+      G4627          7.36      3.026     16.832     13.806
+      G8358          7.33      2.750     14.542     11.792
+      G2022          7.19      3.389     12.935      9.547
+      G1214          7.14      1.902     11.502      9.600
+      G3862          7.11      3.245     15.226     11.981
+      G9516          7.07      3.098     13.404     10.306
+      G1051          7.05      3.217     14.288     11.071
+      G1553          7.02      2.792     11.452      8.660
+      G9015          6.97      3.934     12.212      8.278
+      G1507          6.89      2.076     12.241     10.165
+      G2964          6.84      3.465     15.824     12.359
+      G4203          6.75      1.636     11.833     10.197
+    top 5 DOWN markers
+      G2837        -12.82     -6.495      5.751     12.246
+      G2428        -12.12    -10.542      3.902     14.444
+      G344         -11.13     -1.875     12.233     14.108
+      G9468        -10.62     -3.010     12.634     15.644
+      G6261        -10.03     -2.772     12.213     14.985
+
+Link to the gene clustering
+----------------------------------------------------------------------------
+  figures/11_gene_and_sample_clusters.png shows the mean z-score
+  of every gene cluster from script 05 within every sample
+  cluster found here, which names the gene programmes
+  responsible for separating the sample groups.
+
+Files written
+----------------------------------------------------------------------------
+  results_task2\sample_clusters.tsv
+  results_task2\sample_cluster_signatures.tsv
+  results_task2\sample_bootstrap_support.tsv
+  results_task2\figures\07_sample_correlation_comparison.png
+  results_task2\figures\08_sample_structure.png
+  results_task2\figures\09_sample_pca.png
+  results_task2\figures\10_sample_cluster_signatures.png
+
+Elapsed: 2.7 s
