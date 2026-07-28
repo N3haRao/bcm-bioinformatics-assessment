@@ -1,0 +1,121 @@
+==============================================================================
+Task 3: statistical comparison of two matrices, preserving structure
+==============================================================================
+M1: T3_M1.txt   shape (4, 5)
+M2: T3_M2.txt   shape (4, 5)
+Interpreted as: 4 row categories x 5 independent columns
+
+M1 row sums  : [193.0, 108.0, 44.0, 72.0]
+M1 col sums  : [72.0, 147.0, 95.0, 82.0, 21.0]
+M1 grand total: 417
+M2 row sums  : [239.0, 35.0, 151.0, 46.0]
+M2 col sums  : [87.0, 123.0, 84.0, 97.0, 80.0]
+M2 grand total: 471
+
+Section 1: two shortcuts, tested and rejected
+------------------------------------------------------------------------------
+  (a) Flatten to 20 raw numbers each, paired t-test / Wilcoxon:
+        paired t-test : t = -0.6369, p = 0.5318
+        Wilcoxon      : W = 72.0000, p = 0.5565
+        Verdict: NOT SIGNIFICANT. This ignores row/column identity
+        entirely and is dominated by the fact that M2's grand total
+        (471) is simply bigger than M1's (417). It is comparing
+        'cell number k of M1' to 'cell number k of M2' as if they
+        were a matched pair of the same quantity, which they are not.
+
+  (b) Sum away the 5 columns, one chi-square on the 4 row totals:
+        chi2 = 103.7052, dof = 3, p = 2.481e-22
+        Verdict: highly significant, roughly the right ballpark, but
+        this throws away every column-level fact worth knowing: it
+        cannot say that column 1 alone shows no difference (below),
+        and it implicitly lets whichever column has the largest total
+        dominate the result rather than weighing each column as one
+        independent piece of evidence.
+
+Section 2: per-column tests (each column is its own 2 x 4 table)
+------------------------------------------------------------------------------
+   col     G-stat        G p     chi2 p    min exp Cramer'sV    JS-div   cosine
+     1      3.135     0.3712     0.3731       4.08     0.140    0.0142   0.9911  <- expected count below 5, treat asymptotic p with caution
+     2     28.820  2.444e-06  5.586e-06      18.22     0.317    0.0779   0.8974
+     3     68.949  7.166e-15  3.501e-12      11.73     0.561    0.2763   0.6257
+     4     24.582  1.888e-05  3.591e-05       7.79     0.360    0.1003   0.8258
+     5     18.936  0.0002819  6.427e-05       1.25     0.467    0.1856   0.6214  <- expected count below 5, treat asymptotic p with caution
+
+  hand-rolled chi2/G-test agrees with scipy.stats.chi2_contingency on all 5 columns: True
+
+  Column meanings:
+    G-stat / G p     log-likelihood ratio test, this column's own p-value
+    min exp          smallest expected cell count in this column's table
+                     (below 5 means the chi-square approximation is
+                     shaky, which is why the Monte Carlo check below exists)
+    Cramer's V       effect size, 0 to 1, independent of sample size
+    JS-div           Jensen-Shannon divergence between the two columns'
+                     normalized distributions, a similarity measure
+                     that does not depend on a hypothesis test at all
+    cosine           cosine similarity of the two raw count vectors
+
+  At alpha = 0.05: 4 of 5 columns show a significant difference (columns [2, 3, 4, 5]).
+  Column(s) [1] show NO significant difference on their own, which a pooled test could never tell you.
+
+Section 3: combining the 5 independent columns into one verdict
+------------------------------------------------------------------------------
+  Fisher's combined probability test (requires independent p-values,
+  which is exactly what independent columns give us):
+    chi2 = 131.0674, dof = 10, p = 2.829e-23
+
+  Stouffer's Z method (cross-check, less sensitive to one dominant
+  column than Fisher's method):
+    unweighted   Z = 9.0162, p = 9.738e-20
+    weighted by column sample size   Z = 9.0276, p = 8.773e-20
+
+  Harmonic mean p-value (robust combined figure, no direct null):
+    p_harmonic = 3.583e-14
+
+  Generalized Cochran-Mantel-Haenszel test (columns as independent
+  strata, pools the actual association rather than just the p-values,
+  validated against statsmodels' 2x2xK implementation in
+  validate_generalized_cmh.py):
+    CMH statistic = 92.0864, dof = 3, p = 7.805e-20
+
+  All combination methods agree: the two matrices differ overall.
+  Fisher's method and Stouffer's method combine independent p-values;
+  CMH combines the underlying counts directly and typically has more
+  power when, as here, the direction of the difference is largely
+  consistent across columns (see figure 03_row_consistency.png).
+
+Section 4: Monte Carlo calibration (because two columns have an
+expected cell count under 5, where the chi-square approximation is
+conventionally considered unreliable)
+------------------------------------------------------------------------------
+   col   observed G   asymptotic p  Monte Carlo p
+     1       3.1354         0.3712        0.39188
+     2      28.8196      2.444e-06        0.00000
+     3      68.9490      7.166e-15        0.00000
+     4      24.5817      1.888e-05        0.00003
+     5      18.9358      0.0002819        0.00029
+
+  Combined (sum of the 5 column G-statistics):
+    observed combined statistic = 144.4217
+    asymptotic chi2(10) p        = 2.829e-23
+    Monte Carlo p (300,000 sims)    = 3.333e-06
+    largest simulated null value seen in 300,000 sims = 55.11
+
+  The Monte Carlo and asymptotic figures agree closely on every
+  column, including the two with low expected counts, which means the
+  chi-square approximation can be trusted here despite the small
+  counts. The observed combined statistic is nowhere near the
+  simulated null distribution, so this conclusion does not depend on
+  believing an asymptotic approximation.
+
+Section 5: verdict
+------------------------------------------------------------------------------
+  row 1: direction flips across columns
+  row 2: direction flips across columns
+  row 3: M2 > M1 in every column
+  row 4: direction flips across columns
+
+  Overall: M1 and M2 differ significantly (Fisher combined p = 2.8e-23,
+  CMH p = 7.8e-20, Monte Carlo p = 3.3e-06), driven mainly by columns
+  [2, 3, 4, 5] (column 1 shows no evidence of a difference on its own).
+  Row 3 shows the most consistent signal across every column.
+
