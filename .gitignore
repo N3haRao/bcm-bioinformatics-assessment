@@ -7,7 +7,6 @@ venv/
 env/
 *.egg-info/
 
-# --- Large reference data, not ours to redistribute ---
 # See data/README.md for how to obtain this file.
 data/gencode.v33.annotation.gtf.gz
 
