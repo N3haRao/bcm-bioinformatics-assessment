@@ -1,0 +1,33 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# --- Large reference data, not ours to redistribute ---
+# See data/README.md for how to obtain this file.
+data/gencode.v33.annotation.gtf.gz
+
+# --- Large regenerated intermediates (Task 1) ---
+# These are produced by running the Task 1 scripts against the GTF above.
+# Only the small text reports in results/ are committed; everything below
+# is multi-megabyte and fully reproducible from the scripts.
+task1_gtf_features/bed_features/
+task1_gtf_features/results/T1_annotated.bed
+task1_gtf_features/results/T1_annotated_detailed.tsv
+task1_gtf_features/results/sensitivity/
+
+# --- Editor / tool local config ---
+# .claude/launch.json is a shared dev-server config (how to preview the Task 4
+# Streamlit app), so it's kept; settings.local.json is per-developer and isn't.
+.claude/*
+!.claude/launch.json
+.vscode/
+.idea/
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
