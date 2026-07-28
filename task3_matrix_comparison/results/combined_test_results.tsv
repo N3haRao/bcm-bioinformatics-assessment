@@ -1,0 +1,9 @@
+method	statistic	dof	pvalue
+naive_flatten_paired_t	-0.636946		0.53176
+naive_pooled_chi2	103.705230	3	2.48122e-22
+fisher_combined	131.067367	10	2.82903e-23
+stouffer_unweighted	9.016177		9.73837e-20
+stouffer_weighted	9.027612		8.77296e-20
+harmonic_mean_p			3.58303e-14
+generalized_cmh	92.086400	3	7.80498e-20
+monte_carlo_combined	144.421680		3.33332e-06
