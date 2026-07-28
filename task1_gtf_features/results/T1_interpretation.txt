@@ -1,0 +1,97 @@
+==========================================================================
+Interpretation of T1_annotated_detailed.tsv
+==========================================================================
+Sites analysed: 311,493
+
+A. Enrichment against available sequence space
+--------------------------------------------------------------------------
+   Every base is assigned to exactly ONE class using the same priority
+   order script 02 used (CDS > 5UTR > 3UTR > noncoding exon > intron),
+   counted separately per strand. Expected counts assume the sites were
+   scattered at random across that space.
+
+   class                  unique bp  % space   observed   expected  log2 FC
+   CDS                   35,685,003    1.89%      8,473      4,160    +1.03
+   5UTR                   8,883,699    0.47%      1,163      1,036    +0.17
+   3UTR                  39,873,727    2.12%     98,052      4,648    +4.40
+   noncoding_exon        65,249,296    3.46%     23,555      7,606    +1.63
+   intron             1,734,856,650   92.06%     88,433    202,227    -1.19
+   TOTAL annotated    1,884,548,375  100.00%    219,676
+
+   Unmapped sites for comparison (approximate, uses assembly size):
+   UN / intergenic    4,291,991,289   69.49%     91,817    216,452    -1.24
+
+B. Where the unmapped (UN) sites sit relative to annotated gene ends
+--------------------------------------------------------------------------
+   Distance is oriented by strand, so 'downstream' really means past
+   the 3' end of the nearest transcript, not merely at a higher
+   coordinate.
+
+   distance from 3' end     downstream         %     upstream         %
+   0 to 100 bp                   6,141     6.70%            6     0.01%
+   100 to 500 bp                 6,313     6.88%          103     0.11%
+   500 to 1,000 bp               4,580     4.99%          267     0.29%
+   1,000 to 5,000 bp            16,596    18.09%        2,789     3.04%
+   5,000 to 10,000 bp            8,572     9.35%        2,693     2.94%
+   10,000 to 50,000 bp          16,890    18.42%        9,861    10.75%
+   > 50,000 bp                   8,894     9.70%        8,011     8.73%
+
+   UN sites downstream of a gene end : 67,986 (74.13%)
+   UN sites upstream of a gene end   : 23,730 (25.87%)
+   UN sites within 10 kb downstream  : 42,202 (45.96% of all UN)
+
+   For context, across ALL 311,392 sites:
+     exactly on an annotated transcript 3' end : 21,984 (7.06%)
+     within 50 bp of one                       : 54,401 (17.47%)
+
+C. Metagene position of the 3'UTR sites
+--------------------------------------------------------------------------
+   Position measured in SPLICED transcript coordinates, from the stop
+   codon (0.00) to the polyA site (1.00), using the representative
+   transcript for each site.
+
+   0.00-0.05     4,471    4.56%  ###########
+   0.05-0.10     5,681    5.79%  ##############
+   0.10-0.15     5,137    5.24%  ############
+   0.15-0.20     4,779    4.87%  ###########
+   0.20-0.25     4,410    4.50%  ###########
+   0.25-0.30     4,077    4.16%  ##########
+   0.30-0.35     3,848    3.92%  #########
+   0.35-0.40     3,706    3.78%  #########
+   0.40-0.45     3,606    3.68%  #########
+   0.45-0.50     3,369    3.44%  ########
+   0.50-0.55     3,397    3.46%  ########
+   0.55-0.60     3,214    3.28%  ########
+   0.60-0.65     3,254    3.32%  ########
+   0.65-0.70     3,225    3.29%  ########
+   0.70-0.75     3,240    3.30%  ########
+   0.75-0.80     3,155    3.22%  #######
+   0.80-0.85     3,499    3.57%  ########
+   0.85-0.90     3,799    3.87%  #########
+   0.90-0.95     4,958    5.06%  ############
+   0.95-1.00    23,227   23.69%  ##########################################################
+
+   sites placed on a metagene: 98,052 of 98,052 3'UTR sites
+   in the final 10% of the 3'UTR : 28,185 (28.74%)
+   in the first 10% of the 3'UTR : 10,152 (10.35%)
+   ratio last : first = 2.78
+
+D. Biotype of the genes the sites landed in
+--------------------------------------------------------------------------
+   protein_coding                              183,168   83.38%
+   lncRNA                                       30,859   14.05%
+   transcribed_unprocessed_pseudogene            2,066    0.94%
+   processed_pseudogene                          1,096    0.50%
+   transcribed_processed_pseudogene                819    0.37%
+   transcribed_unitary_pseudogene                  451    0.21%
+   unprocessed_pseudogene                          388    0.18%
+   TEC                                             351    0.16%
+   polymorphic_pseudogene                          241    0.11%
+   miRNA                                            63    0.03%
+   snoRNA                                           51    0.02%
+   snRNA                                            43    0.02%
+   misc_RNA                                         32    0.01%
+   unitary_pseudogene                               16    0.01%
+   TR_C_gene                                         7    0.00%
+
+Elapsed: 13.6 s
