@@ -4,7 +4,7 @@ A small Streamlit app: upload a `.txt`, `.csv`/`.tsv`, or `.pdf` file, ask
 Claude questions about it in plain English, and see concrete proof that the
 answers come from the file rather than from Claude's own general knowledge.
 
-Uses the Anthropic API directly.
+Uses the Anthropic API directly on https://bcm-task.onrender.com
 
 ## Quick start
 
