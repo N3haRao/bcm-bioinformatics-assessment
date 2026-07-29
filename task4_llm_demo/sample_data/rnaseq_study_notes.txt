@@ -1,0 +1,72 @@
+RNA-seq Differential Expression Analysis: BCM-119 Treatment in A549 Cells
+Internal analysis notes, prepared for the bioinformatics core
+
+STUDY OVERVIEW
+
+This experiment tested the transcriptional effect of Compound BCM-119, an
+experimental EGFR/MAPK pathway inhibitor, on A549 cells, a human lung
+adenocarcinoma cell line. Cells were treated with either 10 uM BCM-119 or a
+DMSO vehicle control for 48 hours, with 3 biological replicates per group
+(6 samples total).
+
+METHODS
+
+Total RNA was extracted with the Qiagen RNeasy Mini Kit. Libraries were
+prepared with the NEBNext Ultra II Directional RNA Library Prep Kit and
+sequenced on an Illumina NovaSeq 6000, paired-end 100 bp, targeting 30
+million read pairs per sample. Reads were aligned to the GRCh38 primary
+assembly using the GENCODE v33 annotation (the same annotation build used
+elsewhere in this project) with STAR, and gene-level counts were quantified
+with featureCounts. Differential expression was called with DESeq2 using
+the default Wald test and Benjamini-Hochberg correction for multiple testing.
+
+SIGNIFICANCE CRITERIA
+
+A gene was called significant for this study if BOTH of the following held:
+adjusted p-value (padj) < 0.05, AND absolute log2 fold change > 0.5. Genes
+meeting only one of the two criteria are not counted as significant here,
+even if they are highlighted in the results table for context.
+
+The full differential expression analysis covered every gene in the GENCODE
+v33 annotation. This summary table is a curated panel of 28 genes of
+particular interest for this project: canonical EGFR/MAPK/PI3K-AKT pathway
+members, well known oncogenes and tumor suppressors, two standard reference
+genes, and a handful of tissue-irrelevant genes included as a sanity check.
+
+REFERENCE GENES
+
+GAPDH and ACTB were included in the panel as standard reference
+("housekeeping") genes. Both showed no significant change between conditions
+(padj well above 0.05 for each), which supports the normalization used
+across the two groups.
+
+A NOTE ON THE TISSUE-IRRELEVANT GENES
+
+INS (insulin, normally expressed in pancreatic beta cells) and HBB (beta
+globin, normally expressed in erythroid cells) were included specifically
+because they are not expected to be expressed at meaningful levels in a lung
+epithelial cell line. Their very low baseMean values in the results table
+are the expected outcome, not a technical failure, and served as an
+additional sanity check that the library preparation was tissue-appropriate.
+
+RESULT INTERPRETATION
+
+MYC showed the largest magnitude change of any gene in the panel, a strong
+and highly significant downregulation. This is consistent with MYC's role as
+a transcriptional driver of proliferation downstream of EGFR/MAPK signaling,
+and its loss is expected when that upstream pathway is inhibited. CDK4 was
+also significantly downregulated, consistent with reduced cell cycle
+progression, while CDKN2A (p16) was significantly upregulated, consistent
+with the cell cycle arrest response that typically accompanies reduced CDK4
+activity. IL6 was significantly upregulated, which is consistent with a
+mild inflammatory or cellular stress response to compound treatment rather
+than a direct pathway effect. EGFR itself showed a modest but significant
+increase, which is a commonly reported compensatory feedback response when
+its own downstream signaling is blocked.
+
+WHAT THIS ANALYSIS DOES NOT COVER
+
+Functional validation of these transcriptional changes by qPCR or western
+blot has not yet been performed and is planned as a follow-up. This analysis
+also does not include any dose-response data; only the single 10 uM
+concentration described above was tested in this experiment.
